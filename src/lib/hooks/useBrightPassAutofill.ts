@@ -89,7 +89,7 @@ export function useBrightPassAutofill(
     } finally {
       setLoading(false);
     }
-  }, [siteUrl, vaultId]);
+  }, [siteUrl, vaultId, brightPassApi]);
 
   useEffect(() => {
     void fetchEntries();

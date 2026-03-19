@@ -199,7 +199,7 @@ export const ImportDialog: React.FC<ImportDialogProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [selectedFile, vaultId, format, t, onImportComplete]);
+  }, [selectedFile, brightPassApi, vaultId, format, t, onImportComplete]);
 
   const accepted = getAcceptedFileTypes(format);
   const acceptString = [...accepted.extensions, ...accepted.mimeTypes].join(

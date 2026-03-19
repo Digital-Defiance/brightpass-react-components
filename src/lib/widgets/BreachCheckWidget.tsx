@@ -33,7 +33,7 @@ import { useBrightPassTranslation } from '../hooks/useBrightPassTranslation';
  */
 export function formatBreachMessage(
   breached: boolean,
-  count: number,
+  _count: number,
 ): { severity: 'warning' | 'success'; messageKey: string } {
   if (breached) {
     return { severity: 'warning', messageKey: 'Breach_Found' };
@@ -78,7 +78,7 @@ export const BreachCheckWidget: React.FC<BreachCheckWidgetProps> = ({
     } finally {
       setChecking(false);
     }
-  }, [password]);
+  }, [password, brightPassApi]);
 
   const breachMessage = result
     ? formatBreachMessage(result.breached, result.count)

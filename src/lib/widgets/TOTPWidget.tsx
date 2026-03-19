@@ -54,7 +54,7 @@ export function isValidOtpauthUri(input: string): boolean {
     return (
       url.protocol === 'otpauth:' &&
       url.searchParams.has('secret') &&
-      isValidBase32(url.searchParams.get('secret')!)
+      isValidBase32(url.searchParams.get('secret') ?? '')
     );
   } catch {
     return false;
@@ -107,7 +107,7 @@ export const TOTPWidget: React.FC<TOTPWidgetProps> = ({
         (err as { message?: string })?.message ?? 'Failed to generate TOTP';
       setError(message);
     }
-  }, [secret]);
+  }, [secret, brightPassApi]);
 
   // Fetch on mount and whenever the secret changes
   useEffect(() => {

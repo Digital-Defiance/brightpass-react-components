@@ -13,6 +13,8 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import fc from 'fast-check';
 import React from 'react';
 
+import VaultListView from './VaultListView';
+
 // ---------------------------------------------------------------------------
 // Mocks — set up before importing the component under test.
 // Mock @brightchain/brightchain-lib to avoid the full ECIES/GUID init chain.
@@ -71,8 +73,6 @@ jest.mock('../components/MasterPasswordPrompt', () => ({
   __esModule: true,
   default: () => null,
 }));
-
-import VaultListView from './VaultListView';
 
 // ---------------------------------------------------------------------------
 // Helpers

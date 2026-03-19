@@ -9,6 +9,10 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import { matchSiteUrl } from './useBrightPassAutofill';
+import { isAllowedOrigin } from './useBrightPassExtensionBridge';
+
 // Mock brightchain-lib to avoid the heavy ECIES/GUID init chain
 jest.mock('@brightchain/brightchain-lib', () => ({
   __esModule: true,
@@ -25,10 +29,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     checkBreach: jest.fn(),
   }),
 }));
-
-// Import AFTER mocks
-import { matchSiteUrl } from './useBrightPassAutofill';
-import { isAllowedOrigin } from './useBrightPassExtensionBridge';
 
 describe('Property 19: Autofill site URL matching', () => {
   const alphaChar = fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz'.split(''));

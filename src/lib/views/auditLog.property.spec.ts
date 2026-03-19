@@ -10,6 +10,14 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import type { AuditEntry } from './AuditLogView';
+import {
+  filterAuditEntries,
+  formatAuditEntry,
+  sortAuditEntries,
+} from './AuditLogView';
+
 // Mock brightchain-lib to avoid the heavy ECIES/GUID init chain
 jest.mock('@brightchain/brightchain-lib', () => ({
   __esModule: true,
@@ -51,14 +59,6 @@ jest.mock('../components/BreadcrumbNav', () => ({
   __esModule: true,
   default: () => null,
 }));
-
-// Import AFTER mocks
-import type { AuditEntry } from './AuditLogView';
-import {
-  filterAuditEntries,
-  formatAuditEntry,
-  sortAuditEntries,
-} from './AuditLogView';
 
 const ACTION_TYPES = [
   'VAULT_CREATED',

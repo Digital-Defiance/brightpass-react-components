@@ -18,6 +18,8 @@ import type { IBrightPassError } from '@brightchain/brightchain-lib';
 import { AxiosError, AxiosHeaders } from 'axios';
 import fc from 'fast-check';
 
+import BrightPassApiService from './BrightPassApiService';
+
 // Create mock axios instance for testing
 const mockGet = jest.fn();
 const mockPost = jest.fn();
@@ -30,8 +32,6 @@ const mockAxios = {
   put: (...args: unknown[]) => mockPut(...args),
   delete: (...args: unknown[]) => mockDelete(...args),
 };
-
-import BrightPassApiService from './BrightPassApiService';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -223,18 +223,15 @@ describe('Feature: brightpass-frontend, Properties 1 & 2: BrightPassApiService',
 
             mockGet.mockRejectedValueOnce(makeAxiosError(status, body));
 
-            try {
-              await service.listVaults();
-              // Should not reach here
-              expect(true).toBe(false);
-            } catch (err) {
-              const bpError = err as IBrightPassError;
-              expect(bpError.code).toBe(code);
-              expect(bpError.message).toBe(message);
-              if (details !== undefined) {
-                expect(bpError.details).toEqual(details);
-              }
-            }
+            const bpError = (await service
+              .listVaults()
+              .catch((err) => err)) as IBrightPassError;
+            expect(bpError.code).toBe(code);
+            expect(bpError.message).toBe(message);
+            expect(
+              details === undefined ||
+                JSON.stringify(bpError.details) === JSON.stringify(details),
+            ).toBe(true);
           },
         ),
         { numRuns: 100 },
@@ -257,14 +254,11 @@ describe('Feature: brightpass-frontend, Properties 1 & 2: BrightPassApiService',
 
             mockPost.mockRejectedValueOnce(makeAxiosError(status, body));
 
-            try {
-              await service.checkBreach('test');
-              expect(true).toBe(false);
-            } catch (err) {
-              const bpError = err as IBrightPassError;
-              expect(bpError.code).toBe(`HTTP_${status}`);
-              expect(bpError.message).toBe(message);
-            }
+            const bpError = (await service
+              .checkBreach('test')
+              .catch((err) => err)) as IBrightPassError;
+            expect(bpError.code).toBe(`HTTP_${status}`);
+            expect(bpError.message).toBe(message);
           },
         ),
         { numRuns: 100 },
@@ -282,14 +276,11 @@ describe('Feature: brightpass-frontend, Properties 1 & 2: BrightPassApiService',
         fc.asyncProperty(arbNonEmptyString, async (errorMessage) => {
           mockGet.mockRejectedValueOnce(new Error(errorMessage));
 
-          try {
-            await service.listVaults();
-            expect(true).toBe(false);
-          } catch (err) {
-            const bpError = err as IBrightPassError;
-            expect(bpError.code).toBe('NETWORK_ERROR');
-            expect(bpError.message).toBe(errorMessage);
-          }
+          const bpError = (await service
+            .listVaults()
+            .catch((err) => err)) as IBrightPassError;
+          expect(bpError.code).toBe('NETWORK_ERROR');
+          expect(bpError.message).toBe(errorMessage);
         }),
         { numRuns: 100 },
       );

@@ -24,6 +24,11 @@ import {
 import fc from 'fast-check';
 import React from 'react';
 
+// Import components and functions under test AFTER mocks
+import EntryDetailView from '../components/EntryDetailView';
+import { filterEntries } from '../components/SearchBar';
+import VaultDetailView from './VaultDetailView';
+
 // ---------------------------------------------------------------------------
 // Mocks — must be set up before importing components under test.
 // ---------------------------------------------------------------------------
@@ -103,11 +108,6 @@ jest.mock('../components/MasterPasswordPrompt', () => ({
   __esModule: true,
   default: () => null,
 }));
-
-// Import components and functions under test AFTER mocks
-import EntryDetailView from '../components/EntryDetailView';
-import { filterEntries } from '../components/SearchBar';
-import VaultDetailView from './VaultDetailView';
 
 // ---------------------------------------------------------------------------
 // Arbitraries
@@ -252,10 +252,8 @@ describe('Property 4: Entry list rendering completeness', () => {
         // Title should be present
         expect(screen.getByText(entry.title)).toBeTruthy();
 
-        // Site URL should be present
-        if (entry.siteUrl) {
-          expect(screen.getByText(entry.siteUrl)).toBeTruthy();
-        }
+        // Site URL should be present (siteUrl is always set by our arbitrary)
+        expect(screen.getByText(entry.siteUrl)).toBeTruthy();
 
         // Tags should be present as chips
         for (const tag of entry.tags) {
@@ -263,11 +261,11 @@ describe('Property 4: Entry list rendering completeness', () => {
         }
 
         // Favorite star icon when favorite is true
-        if (entry.favorite) {
-          expect(screen.getByTestId('StarIcon')).toBeTruthy();
-        } else {
-          expect(screen.queryByTestId('StarIcon')).toBeNull();
-        }
+        expect(
+          entry.favorite
+            ? screen.getByTestId('StarIcon') != null
+            : screen.queryByTestId('StarIcon') === null,
+        ).toBe(true);
 
         // Correct type icon
         const expectedIcon = typeToIconTestId[entry.entryType];
@@ -322,9 +320,9 @@ describe('Property 5: Sensitive field masking', () => {
 
         // Verify masked field is present
         await waitFor(() => {
-          expect(screen.getAllByDisplayValue(MASK).length).toBeGreaterThanOrEqual(
-            1,
-          );
+          expect(
+            screen.getAllByDisplayValue(MASK).length,
+          ).toBeGreaterThanOrEqual(1);
         });
 
         // Click the toggle button to reveal
@@ -430,11 +428,9 @@ describe('Property 7: Client-side entry filtering', () => {
               ) ||
               entry.siteUrl.toLowerCase().includes(lowerQuery);
 
-            if (matchesText) {
-              expect(filtered).toContainEqual(entry);
-            } else {
-              expect(filtered).not.toContainEqual(entry);
-            }
+            expect(
+              filtered.some((e) => JSON.stringify(e) === JSON.stringify(entry)),
+            ).toBe(matchesText);
           }
         },
       ),
@@ -465,11 +461,9 @@ describe('Property 7: Client-side entry filtering', () => {
             const matchesType =
               activeTypes.size === 0 || activeTypes.has(entry.entryType);
 
-            if (matchesType) {
-              expect(filtered).toContainEqual(entry);
-            } else {
-              expect(filtered).not.toContainEqual(entry);
-            }
+            expect(
+              filtered.some((e) => JSON.stringify(e) === JSON.stringify(entry)),
+            ).toBe(matchesType);
           }
         },
       ),
@@ -492,11 +486,9 @@ describe('Property 7: Client-side entry filtering', () => {
           const filtered = filterEntries(entries, '', emptyTypes, true);
 
           for (const entry of entries) {
-            if (entry.favorite) {
-              expect(filtered).toContainEqual(entry);
-            } else {
-              expect(filtered).not.toContainEqual(entry);
-            }
+            expect(
+              filtered.some((e) => JSON.stringify(e) === JSON.stringify(entry)),
+            ).toBe(entry.favorite);
           }
         },
       ),
@@ -549,11 +541,9 @@ describe('Property 7: Client-side entry filtering', () => {
 
             const shouldBeIncluded = matchesText && matchesType && matchesFav;
 
-            if (shouldBeIncluded) {
-              expect(filtered).toContainEqual(entry);
-            } else {
-              expect(filtered).not.toContainEqual(entry);
-            }
+            expect(
+              filtered.some((e) => JSON.stringify(e) === JSON.stringify(entry)),
+            ).toBe(shouldBeIncluded);
           }
 
           // Also verify no extra entries snuck in

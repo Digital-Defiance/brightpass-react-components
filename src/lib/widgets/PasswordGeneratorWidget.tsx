@@ -117,7 +117,7 @@ export const PasswordGeneratorWidget: React.FC<
     } finally {
       setGenerating(false);
     }
-  }, [options]);
+  }, [options, brightPassApi]);
 
   const handleCopy = useCallback(async () => {
     if (!result?.password) return;

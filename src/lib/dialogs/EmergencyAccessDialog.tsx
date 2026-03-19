@@ -123,7 +123,7 @@ export const EmergencyAccessDialog: React.FC<EmergencyAccessDialogProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [vaultId, threshold, parseTrustees, t, onSuccess]);
+  }, [vaultId, threshold, parseTrustees, brightPassApi, t, onSuccess]);
 
   const handleRecover = useCallback(async () => {
     setError(null);
@@ -167,7 +167,7 @@ export const EmergencyAccessDialog: React.FC<EmergencyAccessDialogProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [vaultId, shareInputs, t, onSuccess]);
+  }, [vaultId, shareInputs, brightPassApi, t, onSuccess]);
 
   const handleShareInputChange = useCallback((index: number, value: string) => {
     setShareInputs((prev) => {

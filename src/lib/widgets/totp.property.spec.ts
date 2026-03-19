@@ -10,6 +10,15 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import {
+  calculateRemainingSeconds,
+  formatTotpCode,
+  isValidBase32,
+  isValidOtpauthUri,
+  isValidTotpSecret,
+} from './TOTPWidget';
+
 // Mock brightpass-lib to provide BrightPassStrings without the heavy init chain
 jest.mock('@brightchain/brightpass-lib', () => ({
   __esModule: true,
@@ -29,15 +38,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     generateTotp: jest.fn(),
   }),
 }));
-
-// Import AFTER mocks
-import {
-  calculateRemainingSeconds,
-  formatTotpCode,
-  isValidBase32,
-  isValidOtpauthUri,
-  isValidTotpSecret,
-} from './TOTPWidget';
 
 describe('Property 9: TOTP code format', () => {
   it('formats 6-digit codes as "XXX XXX"', () => {

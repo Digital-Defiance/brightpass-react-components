@@ -162,7 +162,7 @@ const EntryDetailView: React.FC<EntryDetailViewProps> = ({
     } finally {
       setDeleting(false);
     }
-  }, [vaultId, entryId, onDelete, t]);
+  }, [brightPassApi, vaultId, entryId, onDelete, t]);
 
   /** Renders a read-only text field. */
   const renderField = (label: string, value: string | undefined) => {

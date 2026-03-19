@@ -95,7 +95,7 @@ const VaultDetailView: React.FC = () => {
 
   const [showLockConfirm, setShowLockConfirm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [error, _setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   // --- Lock vault and navigate back ---
   const handleLockVault = useCallback(() => {
@@ -164,7 +164,9 @@ const VaultDetailView: React.FC = () => {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate(`/brightpass/vaults/${vaultId}/entries/new`)}
+            onClick={() =>
+              navigate(`/brightpass/vaults/${vaultId}/entries/new`)
+            }
           >
             {t(BrightPassStrings.VaultDetail_AddEntry)}
           </Button>

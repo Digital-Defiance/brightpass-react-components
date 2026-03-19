@@ -20,6 +20,9 @@ import type {
 import { cleanup, render, screen } from '@testing-library/react';
 import fc from 'fast-check';
 
+// Import component under test AFTER mocks
+import EntryForm from './EntryForm';
+
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
@@ -51,9 +54,6 @@ jest.mock('../hooks/useBrightPassTranslation', () => ({
   __esModule: true,
   useBrightPassTranslation: () => ({ t: stableT }),
 }));
-
-// Import component under test AFTER mocks
-import EntryForm from './EntryForm';
 
 // ---------------------------------------------------------------------------
 // Arbitraries

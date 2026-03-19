@@ -96,14 +96,14 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
 
   const unlockVault = useCallback(
     async (vaultId: string, masterPassword: string): Promise<void> => {
-      const response: any = await brightPassApi.openVault(
+      const response: IDecryptedVault<string> = await brightPassApi.openVault(
         vaultId,
         masterPassword,
       );
 
       // API returns { metadata: {...}, propertyRecords: [] }
       const { metadata: apiMetadata, propertyRecords } = response;
-      
+
       const metadata: VaultMetadata = {
         id: apiMetadata.id,
         name: apiMetadata.name,
@@ -112,7 +112,7 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
         updatedAt: new Date(apiMetadata.updatedAt),
         entryCount: apiMetadata.entryCount,
         sharedWith: apiMetadata.sharedWith || [],
-        vcblBlockId: apiMetadata.vcblBlockId as VaultMetadata['vcblBlockId'],
+        vcblBlockId: apiMetadata.vcblBlockId,
       };
 
       setVault({
@@ -205,8 +205,7 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
     return () => {
       clearState();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clearState]);
 
   // ── Context value ───────────────────────────────────────────────────
 

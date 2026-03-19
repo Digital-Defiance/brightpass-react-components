@@ -9,6 +9,9 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import { formatBreachMessage } from './BreachCheckWidget';
+
 // Mock brightpass-lib to provide BrightPassStrings without the heavy init chain
 jest.mock('@brightchain/brightpass-lib', () => ({
   __esModule: true,
@@ -28,9 +31,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     checkBreach: jest.fn(),
   }),
 }));
-
-// Import AFTER mocks
-import { formatBreachMessage } from './BreachCheckWidget';
 
 describe('Property 12: Breach result display correctness', () => {
   it('returns warning severity when breached is true', () => {

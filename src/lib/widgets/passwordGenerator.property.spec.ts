@@ -11,6 +11,9 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import { classifyStrength } from './PasswordGeneratorWidget';
+
 // Mock brightpass-lib to provide BrightPassStrings without the heavy init chain
 jest.mock('@brightchain/brightpass-lib', () => ({
   __esModule: true,
@@ -30,9 +33,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     generatePassword: jest.fn(),
   }),
 }));
-
-// Import AFTER mocks
-import { classifyStrength } from './PasswordGeneratorWidget';
 
 describe('Property 8: Password strength classification', () => {
   it('returns "weak" for entropy < 40', () => {

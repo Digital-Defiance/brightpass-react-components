@@ -9,6 +9,9 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import { formatImportSummary, getAcceptedFileTypes } from './ImportDialog';
+
 // Mock brightchain-lib to avoid the heavy ECIES/GUID init chain
 jest.mock('@brightchain/brightchain-lib', () => ({
   __esModule: true,
@@ -28,9 +31,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     importEntries: jest.fn(),
   }),
 }));
-
-// Import AFTER mocks
-import { formatImportSummary, getAcceptedFileTypes } from './ImportDialog';
 
 const KNOWN_FORMATS = [
   '1password_1pux',

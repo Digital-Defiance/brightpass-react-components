@@ -161,14 +161,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
       const results = await brightPassApi.searchEntries(vaultId, searchQuery);
       onServerSearch(results);
     },
-    [query, activeTypes, favoritesOnly, vaultId, onServerSearch],
+    [query, activeTypes, favoritesOnly, brightPassApi, vaultId, onServerSearch],
   );
 
   // Re-apply filter when entries change externally
   useEffect(() => {
     applyFilter(query, activeTypes, favoritesOnly);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entries]);
+  }, [entries, applyFilter, query, activeTypes, favoritesOnly]);
 
   // Cleanup debounce timer on unmount
   useEffect(() => {

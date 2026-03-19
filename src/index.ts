@@ -33,7 +33,6 @@ export type {
 export { useBrightPassTranslation } from './lib/hooks/useBrightPassTranslation';
 
 // ── Views ────────────────────────────────────────────────────────────
-export { default as BrightPassLayout } from './lib/views/BrightPassLayout';
 export {
   default as AuditLogView,
   filterAuditEntries,
@@ -41,6 +40,7 @@ export {
   sortAuditEntries,
 } from './lib/views/AuditLogView';
 export type { AuditEntry } from './lib/views/AuditLogView';
+export { default as BrightPassLayout } from './lib/views/BrightPassLayout';
 export { default as PasswordGeneratorPage } from './lib/views/PasswordGeneratorPage';
 export { default as VaultDetailView } from './lib/views/VaultDetailView';
 export { default as VaultListView } from './lib/views/VaultListView';

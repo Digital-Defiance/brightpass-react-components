@@ -115,10 +115,11 @@ export function useBrightPassExtensionBridge(
 
   // Memoize the allowlist to keep the effect dependency stable when the
   // caller passes a literal array.
+  const allowedOriginsKey = JSON.stringify(allowedOrigins);
   const memoizedAllowlist = useMemo(
     () => allowedOrigins,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(allowedOrigins)],
+    [allowedOriginsKey],
   );
 
   // ── Lifecycle: BRIGHTPASS_READY + message listener ──────────────────

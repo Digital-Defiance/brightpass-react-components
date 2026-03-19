@@ -9,6 +9,9 @@
 
 import fc from 'fast-check';
 
+// Import AFTER mocks
+import { validateThreshold } from './EmergencyAccessDialog';
+
 // Mock brightchain-lib to avoid the heavy ECIES/GUID init chain
 jest.mock('@brightchain/brightchain-lib', () => ({
   __esModule: true,
@@ -29,9 +32,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     recoverWithShares: jest.fn(),
   }),
 }));
-
-// Import AFTER mocks
-import { validateThreshold } from './EmergencyAccessDialog';
 
 describe('Property 13: Emergency access threshold validation', () => {
   it('returns true when 1 <= threshold <= trusteesCount', () => {

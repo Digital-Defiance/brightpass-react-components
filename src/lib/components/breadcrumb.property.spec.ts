@@ -11,6 +11,8 @@
 
 import fc from 'fast-check';
 
+import { BreadcrumbItem, buildBreadcrumbs } from './BreadcrumbNav';
+
 // Mock brightchain-lib to avoid the full initialization chain (GUID validation).
 // We only need the BrightPassStrings constants used by buildBreadcrumbs.
 jest.mock('@brightchain/brightchain-lib', () => ({
@@ -21,8 +23,6 @@ jest.mock('@brightchain/brightchain-lib', () => ({
     Breadcrumb_PasswordGenerator: 'Breadcrumb_PasswordGenerator',
   },
 }));
-
-import { BreadcrumbItem, buildBreadcrumbs } from './BreadcrumbNav';
 
 // ---------------------------------------------------------------------------
 // Identity translation function — returns the key as-is
@@ -132,10 +132,9 @@ describe('Property 21: Breadcrumb route hierarchy', () => {
       fc.property(arbBrightPassRoute, ([pathname, vaultName]) => {
         const items = buildBreadcrumbs(pathname, identity, vaultName);
         const normalized = pathname.replace(/\/+$/, '');
-        for (const item of items) {
-          if (item.to) {
-            expect(normalized.startsWith(item.to)).toBe(true);
-          }
+        const itemsWithTo = items.filter((item) => item.to !== undefined);
+        for (const item of itemsWithTo) {
+          expect(normalized.startsWith(item.to as string)).toBe(true);
         }
       }),
       { numRuns: 100 },
@@ -174,14 +173,15 @@ describe('Property 21: Breadcrumb route hierarchy', () => {
       fc.property(arbBrightPassRoute, ([pathname, vaultName]) => {
         const items = buildBreadcrumbs(pathname, identity, vaultName);
         expect(items.length).toBeGreaterThan(0);
-        if (items.length > 1) {
-          // For deeper routes, first item is a clickable link to /brightpass
-          expect(items[0].to).toBe('/brightpass');
-        } else {
-          // At root, the single item is the current page (no `to`)
-          // but its label should still reference BrightPass
-          expect(items[0].label).toBeDefined();
-        }
+        // For deeper routes, first item is a clickable link to /brightpass
+        // At root, the single item is the current page (no `to`)
+        // but its label should still reference BrightPass
+        const firstItem = items[0];
+        expect(
+          items.length > 1
+            ? firstItem.to === '/brightpass'
+            : firstItem.label !== undefined,
+        ).toBe(true);
       }),
       { numRuns: 100 },
     );

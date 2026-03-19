@@ -15,6 +15,13 @@
 import '@testing-library/jest-dom';
 import { act, render, screen } from '@testing-library/react';
 
+import {
+  BrightPassProvider,
+  DEFAULT_AUTO_LOCK_MS,
+  HIDDEN_TAB_LOCK_MS,
+  useBrightPass,
+} from './BrightPassProvider';
+
 // Mock the API hook before importing the provider
 const mockOpenVault = jest.fn();
 
@@ -23,13 +30,6 @@ jest.mock('../hooks/useBrightPassApi', () => ({
     openVault: (...args: unknown[]) => mockOpenVault(...args),
   }),
 }));
-
-import {
-  BrightPassProvider,
-  DEFAULT_AUTO_LOCK_MS,
-  HIDDEN_TAB_LOCK_MS,
-  useBrightPass,
-} from './BrightPassProvider';
 
 // ---------------------------------------------------------------------------
 // Test consumer component
@@ -317,7 +317,9 @@ describe('BrightPassProvider', () => {
 
   it('throws when useBrightPass is used outside provider', () => {
     // Suppress console.error for the expected error
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'error').mockImplementation(() => {
+      // intentionally suppress console.error for expected throw
+    });
 
     expect(() => render(<TestConsumer />)).toThrow(
       'useBrightPass must be used within a BrightPassProvider',

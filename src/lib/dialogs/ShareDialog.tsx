@@ -94,7 +94,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
     } finally {
       setSharing(false);
     }
-  }, [searchValue, vaultId, t, onShareChanged]);
+  }, [searchValue, brightPassApi, vaultId, t, onShareChanged]);
 
   const handleRevoke = useCallback(
     async (memberId: string) => {
@@ -111,7 +111,7 @@ export const ShareDialog: React.FC<ShareDialogProps> = ({
         setRevoking(null);
       }
     },
-    [vaultId, t, onShareChanged],
+    [brightPassApi, vaultId, t, onShareChanged],
   );
 
   const isLoading = sharing || revoking !== null;

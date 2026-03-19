@@ -297,6 +297,7 @@ const EntryForm: React.FC<EntryFormProps> = ({
       identity,
       entry,
       isEditing,
+      brightPassApi,
       vaultId,
       onSave,
       t,

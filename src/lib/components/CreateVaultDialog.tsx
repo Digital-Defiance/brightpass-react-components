@@ -49,13 +49,13 @@ const CreateVaultDialog: React.FC<CreateVaultDialogProps> = ({
         VALIDATION.VAULT_NAME_MIN_LENGTH,
         t(BrightPassStrings.Validation_VaultNameMinLengthTemplate, {
           MIN_LENGTH: String(VALIDATION.VAULT_NAME_MIN_LENGTH),
-        })
+        }),
       )
       .max(
         VALIDATION.VAULT_NAME_MAX_LENGTH,
         t(BrightPassStrings.Validation_VaultNameMaxLengthTemplate, {
           MAX_LENGTH: String(VALIDATION.VAULT_NAME_MAX_LENGTH),
-        })
+        }),
       )
       .required(t(BrightPassStrings.Validation_VaultNameRequired)),
     masterPassword: Yup.string()
@@ -63,15 +63,21 @@ const CreateVaultDialog: React.FC<CreateVaultDialogProps> = ({
         VALIDATION.PASSWORD_MIN_LENGTH,
         t(BrightPassStrings.Validation_PasswordMinLengthTemplate, {
           MIN_LENGTH: String(VALIDATION.PASSWORD_MIN_LENGTH),
-        })
+        }),
       )
       .matches(/[A-Z]/, t(BrightPassStrings.Validation_PasswordUppercase))
       .matches(/[a-z]/, t(BrightPassStrings.Validation_PasswordLowercase))
       .matches(/[0-9]/, t(BrightPassStrings.Validation_PasswordNumber))
-      .matches(/[^A-Za-z0-9]/, t(BrightPassStrings.Validation_PasswordSpecialChar))
+      .matches(
+        /[^A-Za-z0-9]/,
+        t(BrightPassStrings.Validation_PasswordSpecialChar),
+      )
       .required(t(BrightPassStrings.Validation_PasswordRequired)),
     confirmMasterPassword: Yup.string()
-      .oneOf([Yup.ref('masterPassword')], t(BrightPassStrings.VaultList_PasswordsMustMatch))
+      .oneOf(
+        [Yup.ref('masterPassword')],
+        t(BrightPassStrings.VaultList_PasswordsMustMatch),
+      )
       .required(t(BrightPassStrings.Validation_ConfirmPasswordRequired)),
   });
 
@@ -134,8 +140,13 @@ const CreateVaultDialog: React.FC<CreateVaultDialogProps> = ({
           value={formik.values.masterPassword}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.masterPassword && Boolean(formik.errors.masterPassword)}
-          helperText={formik.touched.masterPassword && formik.errors.masterPassword}
+          error={
+            formik.touched.masterPassword &&
+            Boolean(formik.errors.masterPassword)
+          }
+          helperText={
+            formik.touched.masterPassword && formik.errors.masterPassword
+          }
         />
         <TextField
           margin="dense"
@@ -148,8 +159,14 @@ const CreateVaultDialog: React.FC<CreateVaultDialogProps> = ({
           value={formik.values.confirmMasterPassword}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.confirmMasterPassword && Boolean(formik.errors.confirmMasterPassword)}
-          helperText={formik.touched.confirmMasterPassword && formik.errors.confirmMasterPassword}
+          error={
+            formik.touched.confirmMasterPassword &&
+            Boolean(formik.errors.confirmMasterPassword)
+          }
+          helperText={
+            formik.touched.confirmMasterPassword &&
+            formik.errors.confirmMasterPassword
+          }
         />
       </DialogContent>
       <DialogActions>
