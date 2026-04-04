@@ -1,38 +1,63 @@
+/**
+ * BrightPassLayout — Container-only layout for BrightPass.
+ *
+ * Migrated to use the shared LayoutShell from brightchain-react-components.
+ * No sidebar — uses toolbarActions for the vault button.
+ */
 import { faLock } from '@awesome.me/kit-a20d532681/icons/classic/solid';
-import { BrightChainSubLogo } from '@brightchain/brightchain-react-components';
+import { THEME_COLORS } from '@brightchain/brightchain-lib';
+import {
+  BrightChainSubLogo,
+  LayoutShell,
+  SubLogoHeight,
+  SubLogoIconHeight,
+} from '@brightchain/brightchain-react-components';
 import { BrightPassStrings } from '@brightchain/brightpass-lib';
 import { useI18n } from '@digitaldefiance/express-suite-react-components';
-import { Box, Button, Container } from '@mui/material';
-import { FC, memo } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Button, useTheme } from '@mui/material';
+import { FC, memo, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './BrightPass.scss';
 
 const BrightPassLayout: FC = () => {
+  const contrastText = useTheme().palette.primary.contrastText;
   const { tBranded: t } = useI18n();
   const navigate = useNavigate();
 
-  return (
-    <Container maxWidth="lg">
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        my={2}
+  const brandConfig = useMemo(
+    () => ({
+      appName: 'BrightPass',
+      logo: (
+        <BrightChainSubLogo
+          subText="Pass"
+          icon={faLock}
+          iconColor={contrastText}
+          height={SubLogoHeight}
+          iconHeight={SubLogoIconHeight}
+          leadColor={contrastText}
+        />
+      ),
+      primaryColor: THEME_COLORS.CHAIN_BLUE,
+    }),
+    [contrastText],
+  );
+
+  const toolbarActions = useMemo(
+    () => (
+      <Button
+        variant="contained"
+        color="inherit"
+        onClick={() => navigate('/brightpass')}
+        sx={{ color: 'primary.main' }}
       >
-        <Box display="flex" alignItems="center" gap={1}>
-          <BrightChainSubLogo
-            subText="Pass"
-            icon={faLock}
-            height={30}
-            iconHeight={20}
-          />
-        </Box>
-        <Button variant="contained" onClick={() => navigate('/brightpass')}>
-          {t(BrightPassStrings.VaultList_Title)}
-        </Button>
-      </Box>
-      <Outlet />
-    </Container>
+        {t(BrightPassStrings.VaultList_Title)}
+      </Button>
+    ),
+    [navigate, t],
+  );
+
+  return (
+    <LayoutShell brandConfig={brandConfig} toolbarActions={toolbarActions} />
   );
 };
 
