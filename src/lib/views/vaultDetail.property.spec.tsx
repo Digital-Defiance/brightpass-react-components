@@ -99,6 +99,8 @@ jest.mock('../context/BrightPassProvider', () => ({
   useBrightPass: () => mockUseBrightPass(),
 }));
 
+const mockGetVaultKey = jest.fn().mockReturnValue(new Uint8Array(32));
+
 jest.mock('../components/BreadcrumbNav', () => ({
   __esModule: true,
   default: () => <div data-testid="breadcrumb-nav" />,
@@ -288,6 +290,12 @@ describe('Property 5: Sensitive field masking', () => {
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
+  });
+
+  beforeEach(() => {
+    mockUseBrightPass.mockReturnValue({
+      getVaultKey: mockGetVaultKey,
+    });
   });
 
   /**

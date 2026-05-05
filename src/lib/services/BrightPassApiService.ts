@@ -20,6 +20,7 @@ import type {
   IBreachCheckResult,
   IBrightPassError,
   IDecryptedVault,
+  IEncryptedVaultEntry,
   IGeneratedPassword,
   IPasswordGenerationOptions,
   ITotpCode,
@@ -30,6 +31,7 @@ import type {
   VaultMetadata,
 } from '@brightchain/brightchain-lib';
 import { AxiosInstance, isAxiosError } from 'axios';
+import { decryptVaultEntry, encryptVaultEntry } from '../crypto/vaultCrypto';
 
 interface BrightPassSuccessResponse<T = Record<string, unknown>> {
   success: true;
@@ -118,25 +120,36 @@ class BrightPassApiService {
     }
   }
 
-  async createEntry(vaultId: string, entry: VaultEntry): Promise<VaultEntry> {
+  async createEntry(
+    vaultId: string,
+    entry: VaultEntry,
+    rawKey: Uint8Array,
+  ): Promise<VaultEntry> {
     try {
+      const encrypted = await encryptVaultEntry(entry, rawKey);
       const res = await this.api.post<
-        BrightPassSuccessResponse<{ entry: VaultEntry }>
-      >(`${BASE}/vaults/${encodeURIComponent(vaultId)}/entries`, entry);
-      return extractData(res.data).entry;
+        BrightPassSuccessResponse<{ entry: IEncryptedVaultEntry }>
+      >(`${BASE}/vaults/${encodeURIComponent(vaultId)}/entries`, encrypted);
+      const saved = extractData(res.data).entry;
+      return decryptVaultEntry(saved, rawKey);
     } catch (error) {
       throwBrightPassError(error);
     }
   }
 
-  async getEntry(vaultId: string, entryId: string): Promise<VaultEntry> {
+  async getEntry(
+    vaultId: string,
+    entryId: string,
+    rawKey: Uint8Array,
+  ): Promise<VaultEntry> {
     try {
       const res = await this.api.get<
-        BrightPassSuccessResponse<{ entry: VaultEntry }>
+        BrightPassSuccessResponse<{ entry: IEncryptedVaultEntry }>
       >(
         `${BASE}/vaults/${encodeURIComponent(vaultId)}/entries/${encodeURIComponent(entryId)}`,
       );
-      return extractData(res.data).entry;
+      const encrypted = extractData(res.data).entry;
+      return decryptVaultEntry(encrypted, rawKey);
     } catch (error) {
       throwBrightPassError(error);
     }
@@ -146,15 +159,18 @@ class BrightPassApiService {
     vaultId: string,
     entryId: string,
     entry: VaultEntry,
+    rawKey: Uint8Array,
   ): Promise<VaultEntry> {
     try {
+      const encrypted = await encryptVaultEntry(entry, rawKey);
       const res = await this.api.put<
-        BrightPassSuccessResponse<{ entry: VaultEntry }>
+        BrightPassSuccessResponse<{ entry: IEncryptedVaultEntry }>
       >(
         `${BASE}/vaults/${encodeURIComponent(vaultId)}/entries/${encodeURIComponent(entryId)}`,
-        entry,
+        encrypted,
       );
-      return extractData(res.data).entry;
+      const saved = extractData(res.data).entry;
+      return decryptVaultEntry(saved, rawKey);
     } catch (error) {
       throwBrightPassError(error);
     }

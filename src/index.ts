@@ -12,6 +12,13 @@ export type {
   BrightPassVaultState,
 } from './lib/context/BrightPassProvider';
 
+// ── Crypto ───────────────────────────────────────────────────────────
+export {
+  decryptVaultEntry,
+  deriveVaultKeyFromBase64,
+  encryptVaultEntry,
+} from './lib/crypto/vaultCrypto';
+
 // ── Services ─────────────────────────────────────────────────────────
 export { default as BrightPassApiService } from './lib/services/BrightPassApiService';
 

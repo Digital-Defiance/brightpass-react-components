@@ -40,6 +40,13 @@ jest.mock('../hooks/useBrightPassApi', () => ({
   }),
 }));
 
+jest.mock('../context/BrightPassProvider', () => ({
+  __esModule: true,
+  useBrightPass: () => ({
+    getVaultKey: () => new Uint8Array(32),
+  }),
+}));
+
 const stableT = (key: string, vars?: Record<string, string>) => {
   if (vars) {
     return Object.entries(vars).reduce(

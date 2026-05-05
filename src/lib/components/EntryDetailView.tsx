@@ -40,6 +40,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useBrightPass } from '../context/BrightPassProvider';
 import { useBrightPassApi } from '../hooks/useBrightPassApi';
 import { useBrightPassTranslation } from '../hooks/useBrightPassTranslation';
 
@@ -60,6 +61,7 @@ const EntryDetailView: React.FC<EntryDetailViewProps> = ({
 }) => {
   const { t } = useBrightPassTranslation();
   const brightPassApi = useBrightPassApi();
+  const { getVaultKey } = useBrightPass();
 
   const [entry, setEntry] = useState<VaultEntry | null>(null);
   const [loading, setLoading] = useState(true);
@@ -85,7 +87,7 @@ const EntryDetailView: React.FC<EntryDetailViewProps> = ({
     setError(null);
 
     brightPassApi
-      .getEntry(vaultId, entryId)
+      .getEntry(vaultId, entryId, getVaultKey() as Uint8Array)
       .then((data) => {
         if (!cancelled) {
           setEntry(data);

@@ -24,6 +24,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { deriveVaultKeyFromBase64 } from '../crypto/vaultCrypto';
 import { useBrightPassApi } from '../hooks/useBrightPassApi';
 
 /** Default inactivity timeout in milliseconds (15 minutes). */
@@ -59,6 +60,8 @@ export interface BrightPassContextValue {
   autoLockTimeout: number;
   /** Update the auto-lock timeout. */
   setAutoLockTimeout: (ms: number) => void;
+  /** Returns the derived vault key, or null when locked. */
+  getVaultKey: () => Uint8Array | null;
 }
 
 const BrightPassContext = createContext<BrightPassContextValue | undefined>(
@@ -83,10 +86,17 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
   const hiddenTabTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vaultRef = useRef(vault);
   vaultRef.current = vault;
+  /** Holds derived AES-256-GCM key bytes. Stored in a ref (not state) to
+   *  avoid React DevTools exposure and unnecessary re-renders. */
+  const vaultKeyRef = useRef<Uint8Array | null>(null);
 
   // ── Core lock / unlock ──────────────────────────────────────────────
 
   const clearState = useCallback(() => {
+    if (vaultKeyRef.current) {
+      vaultKeyRef.current.fill(0);
+      vaultKeyRef.current = null;
+    }
     setVault(null);
   }, []);
 
@@ -101,8 +111,17 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
         masterPassword,
       );
 
-      // API returns { metadata: {...}, propertyRecords: [] }
-      const { metadata: apiMetadata, propertyRecords } = response;
+      // API returns { metadata: {...}, propertyRecords: [], vaultSeedB64: '...' }
+      const { metadata: apiMetadata, propertyRecords, vaultSeedB64 } = response;
+
+      // Derive vault key client-side from the BIP39 seed
+      if (vaultSeedB64) {
+        vaultKeyRef.current = deriveVaultKeyFromBase64(
+          vaultSeedB64,
+          masterPassword,
+          vaultId,
+        );
+      }
 
       const metadata: VaultMetadata = {
         id: apiMetadata.id,
@@ -123,6 +142,10 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
     },
     [brightPassApi],
   );
+
+  const getVaultKey = useCallback((): Uint8Array | null => {
+    return vaultKeyRef.current;
+  }, []);
 
   const isVaultUnlocked = useCallback((): boolean => {
     return vaultRef.current !== null;
@@ -216,6 +239,7 @@ export const BrightPassProvider: React.FC<BrightPassProviderProps> = ({
     isVaultUnlocked,
     autoLockTimeout,
     setAutoLockTimeout,
+    getVaultKey,
   };
 
   return (

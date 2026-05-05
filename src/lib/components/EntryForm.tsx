@@ -32,6 +32,7 @@ import {
   TextField,
 } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
+import { useBrightPass } from '../context/BrightPassProvider';
 import { useBrightPassApi } from '../hooks/useBrightPassApi';
 import { useBrightPassTranslation } from '../hooks/useBrightPassTranslation';
 
@@ -212,6 +213,7 @@ const EntryForm: React.FC<EntryFormProps> = ({
   const { t } = useBrightPassTranslation();
   const isEditing = Boolean(entry);
   const brightPassApi = useBrightPassApi();
+  const { getVaultKey } = useBrightPass();
 
   const [activeType, setActiveType] = useState<VaultEntryType>(
     entry?.type ?? 'login',
@@ -274,9 +276,14 @@ const EntryForm: React.FC<EntryFormProps> = ({
             vaultId,
             entry.id,
             builtEntry,
+            getVaultKey() as Uint8Array,
           );
         } else {
-          saved = await brightPassApi.createEntry(vaultId, builtEntry);
+          saved = await brightPassApi.createEntry(
+            vaultId,
+            builtEntry,
+            getVaultKey() as Uint8Array,
+          );
         }
         onSave?.(saved);
       } catch (err) {
