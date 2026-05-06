@@ -11,6 +11,7 @@
  */
 
 import type { VaultMetadata } from '@brightchain/brightchain-lib';
+import { toBrightDateString } from '@brightchain/brightchain-lib';
 import { BrightPassStrings } from '@brightchain/brightpass-lib';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -43,14 +44,16 @@ import MasterPasswordPrompt from '../components/MasterPasswordPrompt';
 import { useBrightPassApi } from '../hooks/useBrightPassApi';
 import { useBrightPassTranslation } from '../hooks/useBrightPassTranslation';
 
-/** Formats a Date for display in the vault list. */
+/** Formats a Date for display in the vault list with BrightDate. */
 function formatDate(date: Date): string {
   const d = date instanceof Date ? date : new Date(date);
-  return d.toLocaleDateString(undefined, {
+  const localeStr = d.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
+  const bd = toBrightDateString(d, 3);
+  return bd ? `${localeStr} (BD ${bd})` : localeStr;
 }
 
 type DialogMode =

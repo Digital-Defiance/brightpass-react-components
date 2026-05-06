@@ -10,7 +10,7 @@
  */
 
 import type { AuditLogEntry } from '@brightchain/brightchain-lib';
-import { AuditAction } from '@brightchain/brightchain-lib';
+import { AuditAction, toBrightDateString } from '@brightchain/brightchain-lib';
 import { BrightPassStrings } from '@brightchain/brightpass-lib';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import type { SelectChangeEvent } from '@mui/material';
@@ -94,8 +94,10 @@ export function formatAuditEntry(entry: AuditEntry): {
   actionLabel: string;
 } {
   const d = new Date(entry.timestamp);
+  const localeStr = d.toLocaleString();
+  const bd = toBrightDateString(entry.timestamp, 3);
   return {
-    formattedTimestamp: d.toLocaleString(),
+    formattedTimestamp: bd ? `${localeStr} (BD ${bd})` : localeStr,
     actionLabel: entry.actionType,
   };
 }

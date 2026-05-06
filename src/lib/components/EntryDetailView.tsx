@@ -18,6 +18,7 @@ import type {
   SecureNoteEntry,
   VaultEntry,
 } from '@brightchain/brightchain-lib';
+import { toBrightDateString } from '@brightchain/brightchain-lib';
 import { BrightPassStrings } from '@brightchain/brightpass-lib';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -382,11 +383,13 @@ const EntryDetailView: React.FC<EntryDetailViewProps> = ({
       <Box display="flex" gap={2} mt={2}>
         <Typography variant="caption" color="text.secondary">
           {t(BrightPassStrings.EntryDetail_CreatedAt)}:{' '}
-          {new Date(entry.createdAt).toLocaleString()}
+          {new Date(entry.createdAt).toLocaleString()} (BD{' '}
+          {toBrightDateString(entry.createdAt, 3)})
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {t(BrightPassStrings.EntryDetail_UpdatedAt)}:{' '}
-          {new Date(entry.updatedAt).toLocaleString()}
+          {new Date(entry.updatedAt).toLocaleString()} (BD{' '}
+          {toBrightDateString(entry.updatedAt, 3)})
         </Typography>
       </Box>
 
